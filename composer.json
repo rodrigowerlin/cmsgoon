@@ -4,7 +4,6 @@
 	"type": "library",
 	"keywords": ["cms", "goon", "tools"],
 	"license": "Apache-2.0",
-	"version": "1.0.0",
 	"authors": [
 		{
 			"name": "Rodrigo werlin",
@@ -15,8 +14,5 @@
 		"psr-4": {
 			"Cmsgoon\\tools\\": "tools/"
 		}
-	},
-	"require": {},
-	"require-dev": {},
-	"minimum-stability": "dev"
+	}
 }

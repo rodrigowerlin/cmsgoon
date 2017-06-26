@@ -1,0 +1,11 @@
+{
+    "name": "cmsgoon/cmsgoon",
+    "description": "Biblioteca para uso em projetos internos",
+    "authors": [
+        {
+            "name": "Rodrigo werlin",
+            "email": "rodrigowerlin@gmail.com"
+        }
+    ],
+    "require": {}
+}

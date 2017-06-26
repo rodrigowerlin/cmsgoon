@@ -1,6 +1,9 @@
 {
 	"name": "rodrigowerlin/cmsgoon",
 	"description": "Biblioteca para uso em projetos internos",
+	"type": "library",
+	"keywords": ["cms", "goon", "tools"],
+	"license": "Apache-2.0",
 	"authors": [
 		{
 			"name": "Rodrigo werlin",

@@ -15,5 +15,8 @@
 			"Cmsgoon\\tools\\": "tools/"
 		}
 	},
+	"require": {
+		"php": ">=5.0.0"
+	},
 	"minimum-stability": "dev"
 }

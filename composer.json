@@ -8,10 +8,8 @@
 		}
 	],
 	"autoload": {
-		"classmap": [""],
 		"psr-4": {
-          "cmsgoon\\": "tools/"  
-			
+			"Cmsgoon\\tools\\": "tools/"
 		}
 	},
 	"require": {}

@@ -1,6 +1,6 @@
 <?php
 
-include '../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 
 echo Cmsgoon\tools\Util::getMonthInWords(3);
 

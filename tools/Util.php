@@ -293,6 +293,14 @@ class Util {
 			exit();
 		}
 
+
+		/* parametros de filtro e analizadores*/
+		if ($fields) {
+			$arrParams['analizer']['linkfrom'] = URL() -> previous();
+			$arrParams['analizer']['linkto'] = URL() -> current();
+			$arrParams['analizer']['ip'] = $_SERVER['REMOTE_ADDR'];
+		}
+
 		// valida os parametros de filtro existentes
 		if (isset($fields['filter_params'])) {
 

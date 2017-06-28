@@ -293,7 +293,6 @@ class Util {
 			exit();
 		}
 
-
 		/* parametros de filtro e analizadores*/
 		if ($fields) {
 			$arrParams['analizer']['linkfrom'] = URL() -> previous();

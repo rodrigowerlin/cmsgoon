@@ -280,7 +280,7 @@ class Util {
 				}
 			}
 		} else {
-			return strpos($haystack, $needles);
+			return strpos($haystack, $needles); 
 		}
 	}
 
@@ -295,9 +295,9 @@ class Util {
 
 		/* parametros de filtro e analizadores*/
 		if ($fields) {
-			$arrParams['analizer']['linkfrom'] = URL() -> previous();
-			$arrParams['analizer']['linkto'] = URL() -> current();
-			$arrParams['analizer']['ip'] = $_SERVER['REMOTE_ADDR'];
+			$fields['analizer']['linkfrom'] = URL() -> previous();
+			$fields['analizer']['linkto'] = URL() -> current();
+			$fields['analizer']['ip'] = $_SERVER['REMOTE_ADDR'];
 		}
 
 		// valida os parametros de filtro existentes

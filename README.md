@@ -11,3 +11,5 @@ git push origin/master "Envia os arquivos pro GIT HUB"
 git tag "Lista as tags de versao"
 git tag v1.6 "Insere nova versao, se já existir o git avisa, dane-se"
 git tag push origin "Envia a tag para a origem e libera para download pelo composer"
+
+git tag v.1.6 -d "Excluir tag do repo local"

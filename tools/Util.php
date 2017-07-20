@@ -230,22 +230,27 @@ class Util {
 	// captura URL da imagem com laravel
 	static public function getUrlImage($id, $tm, $nm, $mon = "n", $dm = null, $pars = "") {
 
-		$mon = ("/" . $mon);
-		$dm = ($dm == null ? "" : "/" . $dm);
-		$pars = ($pars == null ? "" : "/" . $pars);
+		$mon = (DIRECTORY_SEPARATOR . $mon);
+		$dm = ($dm == null ? "" : DIRECTORY_SEPARATOR . $dm);
+		$pars = ($pars == null ? "" : DIRECTORY_SEPARATOR . $pars);
 
-		return url("img") . "/" . self::setBase64Encode($id) . "/" . $tm . "/" . str_slug($nm) . $mon . $dm . $pars;
+		return url("img") . DIRECTORY_SEPARATOR . self::setBase64Encode($id) . DIRECTORY_SEPARATOR . $tm . DIRECTORY_SEPARATOR . str_slug($nm) . $mon . $dm . $pars;
 	}
 
 	// captura URL da files com laravel
 	static public function getUrlFile($id, $nm = null, $pars = "") {
-		$pars = ($pars == null ? "" : "/" . $pars);
-		return url("file") . "/" . self::setBase64Encode($id) . "/" . str_slug($nm) . $pars;
+		$pars = ($pars == null ? "" : DIRECTORY_SEPARATOR . $pars);
+		return url("file") . DIRECTORY_SEPARATOR . self::setBase64Encode($id) . DIRECTORY_SEPARATOR . str_slug($nm) . $pars;
+	}
+
+	// captura URL da files com laravel
+	static public function getDownloadFile($id, $nm = null) {
+		return url("file") . DIRECTORY_SEPARATOR . self::setBase64Encode($id) . DIRECTORY_SEPARATOR . str_slug($nm) . DIRECTORY_SEPARATOR . "s";
 	}
 
 	static public function getUrlAnalyser($direction, $pars = null) {
 
-		$pars = ($pars == null ? "" : "/" . $pars);
+		$pars = ($pars == null ? "" : DIRECTORY_SEPARATOR . $pars);
 
 		if ($direction == "") {
 			return "/#" . $pars;
@@ -259,7 +264,7 @@ class Util {
 				$direction = 'http://' . $direction;
 			}
 			// parametros vao criptorgrafados para que possa ser direcionado particularmente para cada rota do laravel
-			return url("analyser") . "/" . self::setBase64Encode( url() -> current()) . "/" . self::setBase64Encode(url($direction) . $pars);
+			return url("analyser") . DIRECTORY_SEPARATOR . self::setBase64Encode( url() -> current()) . DIRECTORY_SEPARATOR . self::setBase64Encode(url($direction) . $pars);
 
 		}
 
@@ -280,7 +285,7 @@ class Util {
 				}
 			}
 		} else {
-			return strpos($haystack, $needles); 
+			return strpos($haystack, $needles);
 		}
 	}
 

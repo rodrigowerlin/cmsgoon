@@ -12,6 +12,8 @@ git add . "pra add todos".
 
 git commit -m "Acrescentar uma observaçao que lembra que raio eu fiz".
 
+git commit -am 'Add e commit junto'
+
 git push origin/master "Envia os arquivos pro GIT HUB"
  
 git tag "Lista as tags de versao"

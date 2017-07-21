@@ -294,8 +294,7 @@ class Util {
 		$cache = false;
 
 		if (empty($url)) {
-			die("Nao existe url");
-			exit();
+			throw new Exception("Url nao informada em: " . __METHOD__);
 		}
 
 		/* parametros de filtro e analizadores*/
@@ -314,17 +313,9 @@ class Util {
 				$cache = false;
 			}
 
-			// se visitante do site, for usuario do sequence, entao nao controla cache
-			// libera acesso aos dados diretamente.
-			$cache = (($cache == true && Util::visitorIsAdmin()) ? false : true);
-
-			//echo Util::getCookie(Config::get('app.sequence_cookie_name'), Config::get('app.sequence_store'));
-			//echo Config::get('app.sequence_cookie_name');
-			//dd($cache);
-
 		}
 
-		if ($cache) {
+		if ($cache && !Util::visitorIsAdmin()) {
 			$cacheControl = new \Cmsgoon\tools\CacheControl();
 
 			$key = serialize($fields['filter_params']);
@@ -355,12 +346,9 @@ class Util {
 
 		switch (json_last_error()) {
 			case JSON_ERROR_NONE :
-				if ($cache) {
+				if ($cache && !Util::visitorIsAdmin()) {
 
 					$cachetime = isset($fields['filter_params']['cachetime']) ? $fields['filter_params']['cachetime'] : null;
-
-					//			print_r($fields['filter_params']);
-					//			exit ;
 
 					$cacheControl -> store($key, $resposta, $cachetime);
 				}

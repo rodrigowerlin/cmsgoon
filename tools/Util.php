@@ -467,5 +467,20 @@ class Util {
 	public function getRandomNumber() {
 		return md5(uniqid(rand(), true));
 	}
+	
+
+	/**
+	 * retorna um valor de versao para o link de JS e CSS do site
+	 */
+	static public function getQueryStringVersion($force_version = '') {
+		$qry_str = "?";
+		if ($force_version != '') {
+			$qry_str = $qry_str . $force_version;
+		} else {
+			$qry_str = $qry_str . Config::get('app.querystring_version');
+		}
+
+		return $qry_str;
+	}	
 
 }

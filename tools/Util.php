@@ -425,6 +425,20 @@ class Util {
 
 	}
 
+	/**
+	 * Este método é usado para simular a mesmoa funcçao do sequence
+	 * Este cookie dura somente 1hora
+	 */
+	static public function setCookie($name = "_sequs", $value = "", $validade = 'md5') {
+		// if there is cookie ok.
+		if (!setcookie($name, md5($value), time() + 3600, "/")) {
+			return false;
+		}
+
+		return true;
+
+	}
+
 	static public function getCookie($name, $value = "", $validade = 'md5') {
 		// if there is cookie ok.
 		if (isset($_COOKIE[$name])) {
@@ -467,7 +481,6 @@ class Util {
 	public function getRandomNumber() {
 		return md5(uniqid(rand(), true));
 	}
-	
 
 	/**
 	 * retorna um valor de versao para o link de JS e CSS do site
@@ -481,6 +494,6 @@ class Util {
 		}
 
 		return $qry_str;
-	}	
+	}
 
 }

@@ -337,9 +337,7 @@ class Util {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
 		//timeout in seconds
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-		curl_exec($ch);
 
-		/* isto resolverá resquests com https secure*/
 		if (Config::get('app.env') == 'local') {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -347,7 +345,7 @@ class Util {
 
 		curl_exec($ch);
 
-		if (curl_error($ch)) {
+		if ((Config::get('app.env') == 'local') && curl_error($ch)) {
 			echo 'error:' . curl_error($ch);
 			exit ;
 		}

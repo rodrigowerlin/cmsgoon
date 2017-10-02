@@ -144,16 +144,17 @@ class Util {
 		return "";
 	}
 
-	static public function returnOnlyNumber($value) {
+	/**
+	 * Remove todos os caracteres não numericos, deixando
+	 * apenas os numéricos.
+	 *
+	 * @author Rodriog Werlin
+	 * @param $value, é o texto com os algarismos numéricos que serão tratados
+	 * @return se não houver numeros, retorna ZERO
+	 */
 
-		$arr = str_split($value);
-		$value = null;
-		foreach ($arr as $char) {
-			if (is_numeric($char)) {
-				$value .= $char;
-			}
-		}
-		return $value;
+	static public function returnOnlyNumber($value) {
+		return (empty($value) ? "" : (string) preg_replace("/[^0-9]/", "", $value));
 	}
 
 	static public function getTagIfExitValue($tag, $value, $label = "") {
@@ -408,7 +409,7 @@ class Util {
 		$mailer -> Username = Util::getPropFromArray($loja, 0, 'username');
 		$mailer -> Password = Util::getPropFromArray($loja, 0, 'password');
 		$mailer -> Sender = Util::getPropFromArray($loja, 0, 'emailremetente');
-		$mailer -> FromName = Util::getPropFromArray($loja, 0, 'emailremetente');
+		$mailer -> FromName = Util::getPropFromArray($loja, 0, 'title');
 		$mailer -> From = Util::getPropFromArray($loja, 0, 'emailremetente');
 
 		if ($email) {
@@ -431,7 +432,8 @@ class Util {
 		if ($mailer -> Send()) {
 			return true;
 		} else {
-			dd(array_merge($loja, $mailer -> ErrorInfo));
+			throw new Exception($mailer -> ErrorInfo);
+			//dd($mailer -> ErrorInfo);
 			return false;
 		}
 

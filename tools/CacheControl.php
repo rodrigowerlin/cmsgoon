@@ -13,7 +13,7 @@ class CacheControl {
 	 * @var string
 	 */
 	//private static $time = '5 seconds';
-	private static $time = '30 minutes';
+	private $time = '30 minutes';
 	/**
 	 * Local onde o cache será salvo
 	 *
@@ -39,6 +39,13 @@ class CacheControl {
 	public function __construct($folder = null) {
 
 		$folder = Config::get('app.sequence_data_cache');
+
+		if (Config::get('app.sequence_cache_timer')) {
+			$tm = explode("_", Config::get('app.sequence_cache_timer'), 2);
+			$this -> time = implode(" ", $tm);
+			//dd($this -> time);
+		}
+
 		$this -> setFolder($folder);
 	}
 
@@ -167,7 +174,7 @@ class CacheControl {
 	 * @return boolean Se o cache foi salvo
 	 */
 	private function save($key, $content, $time = null) {
-		$time = strtotime(!is_null($time) ? $time : self::$time);
+		$time = strtotime(!is_null($time) ? $time : $this -> time);
 		$content = serialize(array('expires' => $time, 'content' => $content));
 		return $this -> createCacheFile($key, $content);
 	}

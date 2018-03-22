@@ -114,13 +114,27 @@ class Util {
 		return ($len > 0 ? ((strlen($text) > $len ? substr($text, 0, $len) . "..." : $text)) : $text);
 	}
 
+	static public function getPartOfString($text, $len = 0) {
+
+		if ($len > 0) {
+			return substr($text, 0, $len);
+		}
+
+		return $text;
+
+	}
+
 	// OS CAMPOS INTEIROS N�O PODEM LAN�AR ZERO, POR CAUSA DAS CHAVES ESTRANGEIRAS;
 	static public function controleValorZerado($value) {
 		return $value == 0 ? 'null' : $value;
 	}
 
 	static public function formataValoresMonetarios($value) {
-		return number_format($value, 2, ",", ".");
+		return number_format((float)$value, 2, ",", ".");
+	}
+
+	static public function getMonetaryToApi($number, $decimal = 2) {
+		return number_format($number, $decimal, '.', '');
 	}
 
 	static public function trataBooleanos($value) {
@@ -197,6 +211,14 @@ class Util {
 			}
 		}
 		return ($default != null ? (empty($value) ? $default : $value) : $value);
+	}
+
+	/**
+	 * it's not necessáry to set indice of array like ZERO, for exemplo
+	 */
+	static public function getPropSimpleFromArray(array $arrDt, $prop, $index = 0) {
+		return self::getPropFromArray($arrDt, $index, $prop);
+
 	}
 
 	static public function getPaginacao($arr_result, $indexLimit = 0) {
@@ -295,7 +317,7 @@ class Util {
 		$cache = false;
 
 		if (empty($url)) {
-			throw new Exception("Url nao informada em: " . __METHOD__);
+			throw new \Exception("Url nao informada em: " . __METHOD__);
 		}
 
 		/* parametros de filtro e analizadores*/
@@ -312,6 +334,7 @@ class Util {
 
 			if (isset($fields['filter_params']['cache']) && $fields['filter_params']['cache'] == 'no') {
 				$cache = false;
+
 			}
 
 		}
@@ -326,6 +349,8 @@ class Util {
 			}
 		}
 
+//dd(123);
+
 		$json = json_encode($fields);
 
 		$post = ($dt . "=" . $json);
@@ -335,9 +360,9 @@ class Util {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3.14);
 		//timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
 		if (Config::get('app.env') == 'local') {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -346,6 +371,7 @@ class Util {
 
 		curl_exec($ch);
 
+		//echo 'error:' . curl_error($ch);
 		if ((Config::get('app.env') == 'local') && curl_error($ch)) {
 			echo 'error:' . curl_error($ch);
 			exit ;
@@ -379,7 +405,7 @@ class Util {
 				echo ' - Unexpected control character found';
 				break;
 			case JSON_ERROR_SYNTAX :
-				echo ' - Syntax error, malformed JSON';
+				echo ' - Syntax error, malformed JSON in ' . $url;
 				echo PHP_EOL;
 				echo $msg;
 				break;
@@ -432,7 +458,7 @@ class Util {
 		if ($mailer -> Send()) {
 			return true;
 		} else {
-			throw new Exception($mailer -> ErrorInfo);
+			throw new \Exception($mailer -> ErrorInfo);
 			//dd($mailer -> ErrorInfo);
 			return false;
 		}
@@ -508,6 +534,13 @@ class Util {
 		}
 
 		return $qry_str;
+	}
+
+	/**
+	 * @return asset from especific customr for ecommerce
+	 */
+	static public function assetCustom($schema, $path = "") {
+		return asset($schema . "" . Config::get('app.sequence_store') . "_" . Config::get('app.sequence_codloja') . "/" . $path);
 	}
 
 }

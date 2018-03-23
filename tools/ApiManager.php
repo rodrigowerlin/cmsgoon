@@ -104,6 +104,7 @@ trait ApiManager {
 
 		/**
 		 * Verifica o modalidadelojavirtual da loja
+		 * 
 		 */
 
 		if (in_array(Util::getPropSimpleFromArray($result, 'modalidadelojavirtual'), array(1, 2))) {

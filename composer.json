@@ -16,8 +16,7 @@
 		}
 	},
 	"require": {
-		"php": ">=5.0.0",
-		"guzzle/guzzle": "^3.9@dev"
+		"php": ">=5.0.0"
 	},
 	"require-dev": {
 		"php": ">=5.0.0"

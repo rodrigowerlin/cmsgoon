@@ -100,10 +100,13 @@ trait ApiManager {
 
 		$result = $this -> connect($arrParams, "get-stores");
 
-		//dd($result);
-
 		$result[0] -> imgs = array();
-		$result[0] -> imgs[] = Util::assetCustom(Util::getPropSimpleFromArray($result, 'schema'), 'img/opengraph.png');
+
+		if (in_array(Util::getPropSimpleFromArray($result, 'modalidadelojavirtual'), array("1", "2"))) {
+			$result[0] -> imgs[] = Util::assetCustom(Util::getPropSimpleFromArray($result, 'schema'), 'img/opengraph.png');
+		} else {
+			$result[0] -> imgs[] = asset('img/opengraph.png');
+		}
 
 		return $result;
 	}

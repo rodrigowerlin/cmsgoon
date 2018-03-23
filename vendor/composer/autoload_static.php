@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit54cfa021755f7bab6a913497bb937283
 {
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Component\\EventDispatcher\\' => 34,
+        ),
         'C' => 
         array (
             'Cmsgoon\\tools\\' => 14,
@@ -14,9 +18,27 @@ class ComposerStaticInit54cfa021755f7bab6a913497bb937283
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Component\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
+        ),
         'Cmsgoon\\tools\\' => 
         array (
             0 => __DIR__ . '/../..' . '/tools',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'G' => 
+        array (
+            'Guzzle\\Tests' => 
+            array (
+                0 => __DIR__ . '/..' . '/guzzle/guzzle/tests',
+            ),
+            'Guzzle' => 
+            array (
+                0 => __DIR__ . '/..' . '/guzzle/guzzle/src',
+            ),
         ),
     );
 
@@ -25,6 +47,7 @@ class ComposerStaticInit54cfa021755f7bab6a913497bb937283
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit54cfa021755f7bab6a913497bb937283::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit54cfa021755f7bab6a913497bb937283::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit54cfa021755f7bab6a913497bb937283::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

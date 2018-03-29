@@ -349,7 +349,7 @@ class Util {
 			}
 		}
 
-//dd(123);
+		//dd(123);
 
 		$json = json_encode($fields);
 
@@ -541,6 +541,17 @@ class Util {
 	 */
 	static public function assetCustom($schema, $path = "") {
 		return asset($schema . "" . Config::get('app.sequence_store') . "_" . Config::get('app.sequence_codloja') . "/" . $path);
+	}
+
+	static public function paragraph($text) {
+
+		// Order of replacement
+		$order = array("\r\n", "\n", "\r");
+
+		$replace = '</p><p>';
+		// Processes \r\n's first so they aren't converted twice.
+		return '<p>' . str_replace($order, $replace, $text) . '</p>';
+
 	}
 
 }

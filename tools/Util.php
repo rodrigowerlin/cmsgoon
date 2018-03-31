@@ -216,7 +216,7 @@ class Util {
 	/**
 	 * it's not necessáry to set indice of array like ZERO, for exemplo
 	 */
-	static public function getPropSimpleFromArray(array $arrDt, $prop, $index = 0) {
+	static public function getPropSimpleFromArray(array $arrDt, $prop = null, $index = 0) {
 		return self::getPropFromArray($arrDt, $index, $prop);
 
 	}

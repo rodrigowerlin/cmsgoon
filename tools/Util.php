@@ -554,4 +554,12 @@ class Util {
 
 	}
 
+	/**
+	 * Get No Extenssion From file
+	 */
+	static public function getNoExtenssion($file_name, $delimiter = ".") {
+		return explode($delimiter, $file_name, 2)[0];
+
+	}
+
 }

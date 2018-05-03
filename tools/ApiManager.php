@@ -3,7 +3,7 @@
 namespace Cmsgoon\tools;
 
 use App\SequenceServiceModel;
-
+use Illuminate\Http\Request;
 use Config;
 use Cookie;
 
@@ -55,6 +55,11 @@ trait ApiManager {
 	public $msg_result = "";
 
 	/**
+	 * Arra de files para envio por email, ou etc
+	 */
+	public $attachments = array();
+
+	/**
 	 * Estabelece conexao com a API do sequence
 	 * @param $arrParams  parametros de filtros e dados
 	 */
@@ -77,6 +82,32 @@ trait ApiManager {
 		$this -> checkConnectionSuccess();
 
 		return isset($this -> arr_result -> result) ? $this -> result = $this -> arr_result -> result : array();
+
+	}
+
+	/** Rodrigo Werlin
+	 * Retrive the an especific property from first row of array $this->result.
+	 * but, if it does not exist any row, return null;
+	 */
+	public function get($prop_name, $fource_type = "") {
+
+		$value = null;
+
+		if (count($this -> result) > 0) {
+
+			$value = isset($this -> result[0] -> $prop_name) ? $this -> result[0] -> $prop_name : null;
+
+			switch ($fource_type) {
+				case 'b' :
+					$value = ($value == 't');
+					break;
+
+				default :
+					break;
+			}
+		}
+
+		return $value;
 
 	}
 
@@ -139,6 +170,60 @@ trait ApiManager {
 		$util = new Util();
 		$better_token = $util -> getRandomNumber();
 		Cookie::queue(Config::get('app.cookie_cart_number'), $better_token);
+
+	}
+
+	/**
+	 * Generate a new open cart number
+	 * too it works for cotations
+	 */
+	public function uploadFiles(Request $request) {
+
+		// Download file
+		// good informations: http://clivern.com/how-to-create-file-upload-with-laravel/
+		// https://stackoverflow.com/questions/38326282/validating-multiple-files-in-array?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+
+		if ($request -> hasFile('anexos')) {
+
+			foreach ($request -> anexos as $key => $anexo) {
+
+				//$total_file_size += $anexo -> getClientSize();
+
+				// Define um aleatório para o arquivo baseado no timestamps atual
+				//$arr_anexos[$key]['name'] = uniqid(date('HisYmd'));
+
+				//dd($anexo -> getFilename());
+
+				// // Recupera a extensão do arquivo
+				// $arr_anexos[$key]['extension'] = $anexo -> extension();
+				//
+				// // Nome real do arquivo
+				// $arr_anexos[$key]['originalname'] = $anexo -> getClientOriginalName();
+				//
+				// // Define finalmente o nome
+				// $arr_anexos[$key]['filename'] = $arr_anexos[$key]['name'] . "." . $arr_anexos[$key]['extension'];
+				//
+				// // Faz o upload:
+				// $upload = $anexo -> storeAs('anexos', $arr_anexos[$key]['filename']);
+				//
+				// // Verifica se NÃO deu certo o upload (Redireciona de volta)
+				if (!$anexo -> isValid()) {
+					return redirect() -> back() -> with('error', 'Falha ao fazer upload') -> withInput();
+				}
+
+				//$attachments[] = (object) array("path" => storage_path('app/anexos/') . $arr_anexos[$key]['filename'], "name" => $arr_anexos[$key]['originalname']);
+
+				$this -> attachments[] = (object) array("path" => $anexo -> getRealPath(), "name" => $anexo -> getClientOriginalName());
+
+			}
+
+			// $validator = Validator::make($request -> all(), $rules_file, $messages);
+			//
+			// if ($validator -> fails()) {
+			// return redirect('cotacao') -> withErrors($validator) -> withInput();
+			// }
+			return $this -> attachments;
+		}
 
 	}
 

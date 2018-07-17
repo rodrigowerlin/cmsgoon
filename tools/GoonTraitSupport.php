@@ -91,7 +91,7 @@ trait GoonTraitSupport {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function getimg($id, $tm, $nm, $mon, $dimenssion = null, $parms = array()) {
+	public function getimg($id, $tm, $nm, $mon = 'n', $dimenssion = null, $parms = array()) {
 
 		$id = (int)Util::getBase64Decode($id);
 
@@ -116,17 +116,15 @@ trait GoonTraitSupport {
 
 	}
 
+	/**
+	 * Carrega o file pelo codigo do banco de dados
+	 */
 	public function getfile($id, $nm = null, $forcedown = false) {
 
 		$id = (int)Util::getBase64Decode($id);
 
-		/*******************
-		 * BUSCA DADOS PUBLICACOES
-		 *******************/
-
-		$arrParams['filter_params'] = array("codfile" => $id);
 		$serv = new SequenceServiceModel();
-		$arr = $serv -> lists($arrParams, "get-file");
+		$arr = $serv -> lists(['filter_params' => array("codfile" => $id)], "get-file");
 
 		if (count($arr) > 0) {
 			$arr = $arr[0];
@@ -134,6 +132,33 @@ trait GoonTraitSupport {
 			$file = base64_decode($arr -> file_b64);
 			/* force file download */
 			if ($forcedown) {
+
+				return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
+			}
+
+			return response($file, 200) -> header("Content-Type", $arr -> mime_type);
+
+		}
+
+	}
+
+	/**
+	 * Carrega o file pelo pelo nome físico
+	 * Mas utilizado para tabelas genéricas
+	 */
+	public function getfilefull($fileName, $nm = null, $forcedown = 0) {
+
+		$fileName = Util::getBase64Decode($fileName);
+
+		$serv = new SequenceServiceModel();
+		$arr = $serv -> connect(['filter_params' => array("filename" => $fileName)], "get-file");
+
+		if (count($arr) > 0) {
+			$arr = $arr[0];
+
+			$file = base64_decode($arr -> file_b64);
+			/* force file download */
+			if ($forcedown == 1) {
 
 				return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
 			}

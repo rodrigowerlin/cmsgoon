@@ -63,7 +63,7 @@ trait ApiManager {
 	 * Estabelece conexao com a API do sequence
 	 * @param $arrParams  parametros de filtros e dados
 	 */
-	public function connect(array $arrParams, $service) {
+	public function connect(array $arrParams, $service = "get-publishes") {
 
 		$this -> newCart();
 
@@ -73,7 +73,12 @@ trait ApiManager {
 			die("Nao foi informado codigo da loja");
 		}
 
-		$this -> arr_result = Util::loadJson(Config::get('app.sequence_endpoint') . "{$service}", $arrParams);
+		// Habilita monitoramento de acessos
+		if ($service != "get-image") {
+			$arrParams['analizer']['monitored'] = 'S';
+		}
+
+		$this -> arr_result = Util::loadJson(Config::get('app.sequence_endpoint') . "{$service}?cod_loja=" . $arrParams['lg'], $arrParams);
 
 		if (isset($this -> arr_result -> paginations)) {
 			$this -> paginations = $this -> arr_result -> paginations;
@@ -163,6 +168,27 @@ trait ApiManager {
 	}
 
 	/**
+	 * Cadstro de emails para nesletters
+	 */
+
+	public function addemail(Request $request) {
+
+		/*******************
+		 * CADASTRO DE EMAILS
+		 *******************/
+
+		$arrParams['itens'][] = array("email" => $request -> input("email"), "codgrupo" => $request -> input("grupoemail"));
+
+		$pub = new SequenceServiceModel();
+		$pub -> connect($arrParams, "set-newsletters");
+
+		//dd($pub -> msg_result);
+
+		return $pub -> success ?? $pub -> msg_result;
+
+	}
+
+	/**
 	 * Generate renew open cart number
 	 */
 	public function renewCart() {
@@ -224,6 +250,15 @@ trait ApiManager {
 			// }
 			return $this -> attachments;
 		}
+
+	}
+
+	/**
+	 * No Cache
+	 */
+	public function noCache() {
+
+		return "no";
 
 	}
 

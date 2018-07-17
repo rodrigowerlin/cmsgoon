@@ -114,10 +114,10 @@ class Util {
 		return ($len > 0 ? ((strlen($text) > $len ? substr($text, 0, $len) . "..." : $text)) : $text);
 	}
 
-	static public function getPartOfString($text, $len = 0) {
+	static public function getPartOfString($text, $len = 0, $index = 0) {
 
 		if ($len > 0) {
-			return substr($text, 0, $len);
+			return substr($text, $index, $len);
 		}
 
 		return $text;
@@ -189,10 +189,17 @@ class Util {
 			if (!is_null($prop)) {
 				//var_dump($arrDt[$index]);
 				if (is_object($arrDt[$index])) {
-					$value = trim($arrDt[$index] -> $prop);
+					$value = $arrDt[$index] -> $prop;
 				} else {
-					$value = trim($arrDt[$index][$prop]);
+					$value = $arrDt[$index][$prop];
+				}
 
+				// if (is_array($value)) {
+				// $value = (object) $value[$index];
+				// }
+
+				if (is_string($value)) {
+					$value = trim($value);
 				}
 
 			} else {
@@ -260,10 +267,23 @@ class Util {
 		return url("img") . "/" . self::setBase64Encode($id) . "/" . $tm . "/" . str_slug($nm) . $mon . $dm . $pars;
 	}
 
-	// captura URL da files com laravel
+
+	//Supri o parametro de monitoramento
+	static public function getUrlImageMonitored($id, $tm, $nm, $dm = null, $pars = "") {
+	
+	//Supri o parametro de monitoramento fixando em S = SIM
+		return self::getUrlImage($id, $tm, $nm, "S", $dm = null, $pars = "");
+	}
+
+	// captura URL dos files com laravel
 	static public function getUrlFile($id, $nm = null, $pars = "") {
 		$pars = ($pars == null ? "" : "/" . $pars);
 		return url("file") . "/" . self::setBase64Encode($id) . "/" . str_slug($nm) . $pars;
+	}
+
+	static public function getFileFull($filename, $nm = "", $force = 0) {
+		//$pars = ($pars == null ? "" : "/" . $pars);
+		return route("file-full",['filename'=>self::setBase64Encode($filename), 'nm'=>str_slug($nm), 'force'=>$force]) ;
 	}
 
 	// captura URL da files com laravel
@@ -312,9 +332,13 @@ class Util {
 		}
 	}
 
-	static public function loadJson($url, array $fields = array(), $dt = "dt") {
+static public function loadJson($url, array $fields = array(), $dt = "dt") {
 
 		$cache = false;
+	
+		// Se for o moderador, deixa tempo indeterminado no timer
+		$curlopt_connecttimeout = 10.14;
+		$curlopt_timeou = 30;
 
 		if (empty($url)) {
 			throw new \Exception("Url nao informada em: " . __METHOD__);
@@ -334,9 +358,7 @@ class Util {
 
 			if (isset($fields['filter_params']['cache']) && $fields['filter_params']['cache'] == 'no') {
 				$cache = false;
-
 			}
-
 		}
 
 		if ($cache && !Util::visitorIsAdmin()) {
@@ -347,6 +369,14 @@ class Util {
 			if ($cacheControl -> getData($key)) {
 				return $cacheControl -> result;
 			}
+		}
+		
+		
+		if ($cache && !Util::visitorIsAdmin()) {
+			
+			//dd(123);
+			$curlopt_connecttimeout = 0;
+			$curlopt_timeou = 0;
 		}
 
 		//dd(123);
@@ -360,9 +390,9 @@ class Util {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3.14);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curlopt_connecttimeout);
 		//timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $curlopt_timeou);
 
 		if (Config::get('app.env') == 'local') {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -373,7 +403,7 @@ class Util {
 
 		//echo 'error:' . curl_error($ch);
 		if ((Config::get('app.env') == 'local') && curl_error($ch)) {
-			echo 'error:' . curl_error($ch);
+			echo 'Connect msg:' . curl_error($ch) . $json;
 			exit ;
 		}
 
@@ -387,9 +417,14 @@ class Util {
 			case JSON_ERROR_NONE :
 				if ($cache && !Util::visitorIsAdmin()) {
 
-					$cachetime = isset($fields['filter_params']['cachetime']) ? $fields['filter_params']['cachetime'] : null;
+					$cachetime = ($fields['filter_params']['cachetime'] ?? null);
 
-					$cacheControl -> store($key, $resposta, $cachetime);
+					/**
+					 * Cria cache somente se houver resultados no retorno
+					 */
+					if (isset($resposta -> result) && count($resposta -> result) > 0) {
+						$cacheControl -> store($key, $resposta, $cachetime);
+					}
 				}
 
 				return $resposta;
@@ -423,7 +458,11 @@ class Util {
 	public function sendMail(array $loja, $subject, $body, array $attachment = null, $email = null, $nome = null) {
 
 		$mailer = new PHPMailer();
-		$mailer -> IsSMTP();
+		
+		if(Util::getPropFromArray($loja, 0, 'mecanismoemail')=="smtp"){
+			$mailer -> IsSMTP();
+		}
+		
 		//$mailer -> SMTPDebug = 1;
 		$mailer -> setLanguage('br');
 		$mailer -> CharSet = 'UTF-8';

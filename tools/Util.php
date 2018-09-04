@@ -37,6 +37,21 @@ class Util {
 
 		return "";
 	}
+	
+	/**
+	 * @return $thiss, else thiss does'n exists return $that
+	 */
+	static public function getThisOrThat($thiss, $that){
+		return (empty($thiss) ? $that : $thiss ); 
+	}
+	
+	/**
+	 * @return $thiss, else thiss does'n exists return $that
+	 */
+	static public function getIfThisItOrThat($thiss,$it, $that = '-'){
+		return (!empty($thiss) ? $it : $that ); 
+	}
+		
 
 	static public function getLimitedCardText($text, $len = null) {
 		if ($len) {
@@ -170,6 +185,19 @@ class Util {
 	static public function returnOnlyNumber($value) {
 		return (empty($value) ? "" : (string) preg_replace("/[^0-9]/", "", $value));
 	}
+
+	/**
+	 * Converte valores com virgulas para ponto
+	 */
+	public static function convertNumberToApi($string) {
+
+        if (strpos($string, ",") !== false) {
+            $string = str_replace(".", "", $string);
+            $string = str_replace(",", ".", $string);
+        }
+
+        return $string;
+    }
 
 	static public function getTagIfExitValue($tag, $value, $label = "") {
 
@@ -337,7 +365,7 @@ static public function loadJson($url, array $fields = array(), $dt = "dt") {
 		$cache = false;
 	
 		// Se for o moderador, deixa tempo indeterminado no timer
-		$curlopt_connecttimeout = 10.14;
+		$curlopt_connecttimeout = 10;
 		$curlopt_timeou = 30;
 
 		if (empty($url)) {
@@ -379,17 +407,16 @@ static public function loadJson($url, array $fields = array(), $dt = "dt") {
 			$curlopt_timeou = 0;
 		}
 
-		//dd(123);
-
 		$json = json_encode($fields);
 
-		$post = ($dt . "=" . $json);
+		//$post = ($dt . "=" . $json);
 
 		ob_start();
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curlopt_connecttimeout);
 		//timeout in seconds
 		curl_setopt($ch, CURLOPT_TIMEOUT, $curlopt_timeou);

@@ -7,7 +7,7 @@ use Config;
 
 class Util {
 
-	static public function getMonthInWords($month) {
+	static public function getMonthInWords($month = null) {
 
 		$arrMonth = array();
 		$arrMonth[] = "Janeiro";
@@ -22,6 +22,10 @@ class Util {
 		$arrMonth[] = "Outubro";
 		$arrMonth[] = "Novembro";
 		$arrMonth[] = "Dezembro";
+
+		if(is_null($month)){
+			return $month;
+		}
 
 		return $arrMonth[$month];
 	}

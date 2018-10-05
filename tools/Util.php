@@ -24,7 +24,7 @@ class Util {
 		$arrMonth[] = "Dezembro";
 
 		if(is_null($month)){
-			return $month;
+			return $arrMonth;
 		}
 
 		return $arrMonth[$month];
@@ -313,9 +313,8 @@ class Util {
 		return url("file") . "/" . self::setBase64Encode($id) . "/" . str_slug($nm) . $pars;
 	}
 
-	static public function getFileFull($filename, $nm = "", $force = 0) {
-		//$pars = ($pars == null ? "" : "/" . $pars);
-		return route("file-full",['filename'=>self::setBase64Encode($filename), 'nm'=>str_slug($nm), 'force'=>$force]) ;
+	static public function getFileFull($filename, $nm = "", $force = "n", $folder = "") {
+		return route("file-full",['filename'=>self::setBase64Encode($filename),'force'=>$force, 'folder'=>$folder, 'nm'=>str_slug($nm)]) ;
 	}
 
 	// captura URL da files com laravel
@@ -514,7 +513,7 @@ static public function loadJson($url, array $fields = array(), $dt = "dt") {
 			$mailer -> AddAddress(Util::getPropFromArray($loja, 0, 'email'));
 		}
 
-		$mailer -> AddAddress('rodrigowerlin@gmail.com');
+		//$mailer -> AddAddress('contato@goondt.com');
 
 		$mailer -> Subject = $subject;
 		$mailer -> Body = $body;

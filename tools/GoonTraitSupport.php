@@ -119,19 +119,20 @@ trait GoonTraitSupport {
 	/**
 	 * Carrega o file pelo codigo do banco de dados
 	 */
-	public function getfile($id, $nm = null, $forcedown = false) {
+	public function getfile($id, $forcedown = "n", $folder = "", $nm = "" ) {
 
 		$id = (int)Util::getBase64Decode($id);
 
 		$serv = new SequenceServiceModel();
-		$arr = $serv -> lists(['filter_params' => array("codfile" => $id)], "get-file");
+		$arr = $serv -> lists(['filter_params' => array("codfile" => $id, "folder" => $folder)], "get-file");
 
 		if (count($arr) > 0) {
+
 			$arr = $arr[0];
 
 			$file = base64_decode($arr -> file_b64);
 			/* force file download */
-			if ($forcedown) {
+			if ($forcedown=="s") {
 
 				return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
 			}

@@ -313,9 +313,20 @@ class Util {
 		return url("file") . "/" . self::setBase64Encode($id) . "/" . str_slug($nm) . $pars;
 	}
 
-	static public function getFileFull($filename, $nm = "", $force = "n", $folder = "") {
-		return route("file-full",['filename'=>self::setBase64Encode($filename),'force'=>$force, 'folder'=>$folder, 'nm'=>str_slug($nm)]) ;
+	// Prepara rota de arquivos carregados pelo nome
+	static public function getFileFull($filename, $nm = "", $route_name="file-full", $force = "n", $folder = "") {
+
+		if($folder == ""){
+			// busca rota padrão
+			// normalmente utilizado para tabelas genéricas
+			return route($route_name,['filename'=>self::setBase64Encode($filename),'force'=>$force, 'nm'=>str_slug($nm)]) ;
+		
+		}
+
+		// busca rota passando folder de arquivos
+		return route($route_name,['filename'=>self::setBase64Encode($filename),'force'=>$force, 'folder'=>$folder, 'nm'=>str_slug($nm)]) ;
 	}
+	
 
 	// captura URL da files com laravel
 	static public function getDownloadFile($id, $nm = null) {

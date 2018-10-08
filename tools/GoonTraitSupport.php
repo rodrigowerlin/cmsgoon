@@ -72,7 +72,7 @@ trait GoonTraitSupport {
 
 			$arr_email = array();
 			$pub = new SequenceServiceModel();
-			$pub -> lists($arrParams, "set-newsletters");
+			$pub -> connect($arrParams, "set-newsletters");
 
 			if (!$pub -> success) {
 				Session::flash('success', $pub -> msg_result);
@@ -107,7 +107,7 @@ trait GoonTraitSupport {
 		$arrParams['filter_params'] = $parms;
 
 		$serv = new SequenceServiceModel();
-		$arr = $serv -> lists($arrParams, "get-image");
+		$arr = $serv -> connect($arrParams, "get-image");
 
 		if (count($arr) > 0) {
 			$arr = $arr[0];
@@ -116,23 +116,24 @@ trait GoonTraitSupport {
 
 	}
 
-	/**
-	 * Carrega o file pelo codigo do banco de dados
-	 */
-	public function getfile($id, $forcedown = "n", $folder = "", $nm = "" ) {
+	public function getfile($id, $nm = null, $forcedown = false) {
 
 		$id = (int)Util::getBase64Decode($id);
 
+		/*******************
+		 * BUSCA DADOS PUBLICACOES
+		 *******************/
+
+		$arrParams['filter_params'] = array("codfile" => $id);
 		$serv = new SequenceServiceModel();
-		$arr = $serv -> lists(['filter_params' => array("codfile" => $id, "folder" => $folder)], "get-file");
+		$arr = $serv -> connect($arrParams, "get-file");
 
 		if (count($arr) > 0) {
-
 			$arr = $arr[0];
 
 			$file = base64_decode($arr -> file_b64);
 			/* force file download */
-			if ($forcedown=="s") {
+			if ($forcedown) {
 
 				return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
 			}
@@ -147,24 +148,33 @@ trait GoonTraitSupport {
 	 * Carrega o file pelo pelo nome físico
 	 * Mas utilizado para tabelas genéricas
 	 */
-	public function getfilefull($fileName, $nm = null, $forcedown = 0) {
+	public function getfilefull($fileName, $forcedown = "n",  $nm = "") {
+
+		return $this->getFileFromFolder($fileName, $forcedown,  $folder = "", $nm);
+
+	}
+
+/**
+	 * Carrega o file pelo pelo nome físico
+	 * Mas utilizado para tabelas genéricas
+	 */
+	public function getFileFromFolder($fileName, $forcedown = "n", $folder = "", $nm = "") {
 
 		$fileName = Util::getBase64Decode($fileName);
 
 		$serv = new SequenceServiceModel();
-		$arr = $serv -> connect(['filter_params' => array("filename" => $fileName)], "get-file");
+		$arr = $serv -> connect(['filter_params' => array("filename" => $fileName, "folder" => $folder)], "get-file");
 
 		if (count($arr) > 0) {
 			$arr = $arr[0];
 
 			$file = base64_decode($arr -> file_b64);
 			/* force file download */
-			if ($forcedown == 1) {
-
-				return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
+			if ($forcedown=="n") {
+				return response($file, 200) -> header("Content-Type", $arr -> mime_type);
 			}
 
-			return response($file, 200) -> header("Content-Type", $arr -> mime_type);
+			return response($file, 200) -> header("Content-Type", $arr -> mime_type) -> header("Content-Disposition", "attachment; filename={$arr -> nome}") -> header("Content-Transfer-Encoding", "binary") -> header("Content-Length", strlen($file));
 
 		}
 

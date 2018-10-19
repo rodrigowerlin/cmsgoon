@@ -262,4 +262,16 @@ trait ApiManager {
 
 	}
 
+	//Busca o Endereço pelo CEP
+	public function getAddressByCep(Request $request) {
+		$obj = new \stdClass();
+		$obj->bairro = "Santa Helena";
+		$obj->cep = "95702460";
+		$obj->cidade = "Bento Gonçalves";
+		$obj->complemento = "";
+		$obj->endereco = "Rua Fiorello Stefenon";
+		$obj->uf = "RS";
+		return response()->json($obj);
+	}
+
 }

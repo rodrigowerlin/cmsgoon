@@ -264,14 +264,19 @@ trait ApiManager {
 
 	//Busca o Endereço pelo CEP
 	public function getAddressByCep(Request $request) {
-		$obj = new \stdClass();
-		$obj->bairro = "Santa Helena";
-		$obj->cep = "95702460";
-		$obj->cidade = "Bento Gonçalves";
-		$obj->complemento = "";
-		$obj->endereco = "Rua Fiorello Stefenon";
-		$obj->uf = "RS";
-		return response()->json($obj);
+		$arrParams['filter_params'] = array("cep" => $request->cep, "cache" => $this->noCache());
+		$address = $this->connect($arrParams, "get-address-cep");
+
+		//Percorre os estados, verificando pela sigla e atribuindo o codestado
+		if($address) {
+			foreach($this->model_estados as $estado) {
+				if($estado->sigla == $address->uf) {
+					$address->estado = $estado->codestado;
+				}
+			}
+		}
+
+		return response()->json($address);
 	}
 
 }

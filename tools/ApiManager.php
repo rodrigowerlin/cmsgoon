@@ -292,21 +292,4 @@ trait ApiManager
         return response()->json($address);
     }
 
-	//Busca o Endereço pelo CEP
-	public function getAddressByCep(Request $request) {
-		$arrParams['filter_params'] = array("cep" => $request->cep, "cache" => $this->noCache());
-		$address = $this->connect($arrParams, "get-address-cep");
-
-		//Percorre os estados, verificando pela sigla e atribuindo o codestado
-		if($address) {
-			foreach($this->model_estados as $estado) {
-				if($estado->sigla == $address->uf) {
-					$address->estado = $estado->codestado;
-				}
-			}
-		}
-
-		return response()->json($address);
-	}
-
 }

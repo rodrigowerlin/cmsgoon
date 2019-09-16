@@ -176,9 +176,9 @@ trait ApiManager
     }
 
     /**
-     * Cadstro de emails para nesletters
+     * Cadastro de emails para newsletters
      */
-    public function addemail(Request $request) 
+    public function addemail(Request $request)
     {
 
         /*******************

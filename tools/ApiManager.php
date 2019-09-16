@@ -178,7 +178,7 @@ trait ApiManager
     /**
      * Cadstro de emails para nesletters
      */
-    public function addemail(Request $request)
+    public function addemail(Request $request) 
     {
 
         /*******************

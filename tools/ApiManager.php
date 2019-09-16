@@ -178,7 +178,6 @@ trait ApiManager
     /**
      * Cadstro de emails para nesletters
      */
-
     public function addemail(Request $request)
     {
 
@@ -186,14 +185,12 @@ trait ApiManager
          * CADASTRO DE EMAILS
          *******************/
 
-        $arrParams['itens'][] = array("email" => $request->input("email"), "codgrupo" => $request->input("grupoemail"));
+        $arrParams['itens'][] = array("codloja" => Config::get('app.sequence_codloja'), "nome" => $request->input("nome"), "email" => $request->input("email"), "codgrupo" => $request->input("grupoemail"));
 
         $pub = new SequenceServiceModel();
         $pub->connect($arrParams, "set-newsletters");
 
-        //dd($pub -> msg_result);
-
-        return $pub->success ?? $pub->msg_result;
+        return $pub->success == true ? $pub->success : $pub->msg_result;
 
     }
 
